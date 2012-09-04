@@ -1,0 +1,11 @@
+*.pyc
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+dist
+doc/_build
+doc/modules/generated
+doc/auto_examples
+.idea
