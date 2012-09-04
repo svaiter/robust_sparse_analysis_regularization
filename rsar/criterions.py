@@ -6,12 +6,11 @@ Criterions for analysis regularization: IC, wRC, IC-noker
 from __future__ import division
 import numpy as np
 import scipy
-from scipy import linalg
 
 from pyprox.operators import dual_prox
 from pyprox.algorithms import douglas_rachford
 
-from utils import null, l1ball_projection
+from rsar.utils import null, l1ball_projection
 
 
 def _ic_minimization(DJ, Omega_x0):
