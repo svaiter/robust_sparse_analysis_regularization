@@ -8,42 +8,18 @@ import numpy as np
 import scipy
 from scipy import linalg
 
-#def null(A, eps=1e-15):
-#    """
-#    Computes the null space of the real matrix A
-#    """
-#    n, m = scipy.shape(A)
-#    if n > m :
-#        return scipy.transpose(null(scipy.transpose(A), eps))
-#        return null(scipy.transpose(A), eps)
-#    u, s, vh = scipy.linalg.svd(A)
-#    s=scipy.append(s,scipy.zeros(m))[0:m]
-#    null_mask = (s <= eps)
-#    null_space = scipy.compress(null_mask, vh, axis=0)
-#    return scipy.transpose(null_space)
 
-def null(A, tol=1e-10, row_wise_storage=True):
-    """
-    Return the null space of a matrix A.
-    If row_wise_storage is True, a two-dimensional array where the
-    vectors that span the null space are stored as rows, otherwise
-    they are stored as columns.
-
-    Code by Bastian Weber based on code by Robert Kern and Ryan Krauss.
-    """
-    n, m = A.shape
-    if n > m :
-        return np.transpose(null(np.transpose(A), tol))
-
-    u, s, vh = linalg.svd(A)
-    s = np.append(s, np.zeros(m))[0:m]
-    null_mask = (s <= tol)
-    null_space = np.compress(null_mask, vh, axis=0)
-    null_space = np.conjugate(null_space)  # in case of complex values
-    if row_wise_storage:
-        return null_space
+def null(A, tol=1e-10):
+    (m,n) = A.shape
+    U, S, Vh = linalg.svd(A)
+    if m > 1:
+        s = np.diag(S)
+    elif m == 1:
+        s = S[1]
     else:
-        return np.transpose(null_space)
+        s = 0
+    r = np.sum(s > tol)
+    return Vh.T[:,r:n]
 
 # Adrien Gaidon - INRIA - 2011
 def euclidean_proj_simplex(v, s=1):
@@ -126,7 +102,13 @@ def l1ball_projection(v, s=1):
     euclidean_proj_simplex
     """
     assert s > 0, "Radius s must be strictly positive (%d <= 0)" % s
-    n, = v.shape  # will raise ValueError if v is not 1-D
+    if len(v.shape) > 1:
+        n,m = v.shape
+        assert m == 1, "Must be 1D vector"
+        v = v.flatten()
+    else:
+        n, = v.shape  # will raise ValueError if v is not 1-D
+        m = 0
     # compute the vector of absolute values
     u = np.abs(v)
     # check if v is already a solution
@@ -138,4 +120,7 @@ def l1ball_projection(v, s=1):
     w = euclidean_proj_simplex(u, s=s)
     # compute the solution to the original problem on v
     w *= np.sign(v)
-    return w
+    if m <> 0:
+        return w[:,np.newaxis]
+    else:
+        return w
