@@ -6,7 +6,7 @@ Criterions for analysis regularization: IC, wRC, IC-noker
 from __future__ import division
 import numpy as np
 import scipy
-from scipy.sparse.linalg import cgs, LinearOperator, lsqr
+#from scipy.sparse.linalg import cgs, LinearOperator, lsqr
 
 from pyprox.operators import dual_prox
 from pyprox.algorithms import douglas_rachford
