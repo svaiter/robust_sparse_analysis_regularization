@@ -30,7 +30,7 @@ def _ic_minimization(DJ, Omega_x0, maxiter):
     return np.max(np.abs(Omega_x0 - w))
 
 
-def criterions_dict(D, Phi, x, maxiter=75):
+def criterions_dict(D, Phi, x, maxiter=200):
     # Dimensions of the problem
     N = np.size(D, 0)
     P = np.size(D, 1)
@@ -86,8 +86,8 @@ def criterions_dict(D, Phi, x, maxiter=75):
 
     return res
 
-def ic(D, Phi, x):
-    return criterions_dict(D, Phi, x)['IC']
+def ic(D, Phi, x, maxiter=200):
+    return criterions_dict(D, Phi, x, maxiter=maxiter)['IC']
 
 #def _fast_ic(J, DJ, DJS, DI, DIS, Phi, PhiS, x):
 #    N = DJ.shape[0]
