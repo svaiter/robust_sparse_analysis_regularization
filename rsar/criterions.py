@@ -6,7 +6,6 @@ Criterions for analysis regularization: IC, wRC, IC-noker
 from __future__ import division
 import numpy as np
 import scipy
-#from scipy.sparse.linalg import cgs, LinearOperator, lsqr
 
 from pyprox.operators import dual_prox
 from pyprox.algorithms import douglas_rachford
@@ -86,45 +85,6 @@ def criterions_dict(D, Phi, x, maxiter=200):
 
     return res
 
+
 def ic(D, Phi, x, maxiter=200):
     return criterions_dict(D, Phi, x, maxiter=maxiter)['IC']
-
-#def _fast_ic(J, DJ, DJS, DI, DIS, Phi, PhiS, x):
-#    N = DJ.shape[0]
-#    block_fun = lambda v : np.concatenate(
-#        (PhiS(Phi(v[:N,:])) + DJ(v[N:,:]),
-#         DJS(v[:N,:])),
-#        axis=0)
-#    block_op = LinearOperator(
-#        (N+len(J),N+len(J)),
-#        block_fun,
-#        block_fun
-#    )
-#    A_fun = lambda u : cgs(
-#        block_op,
-#        np.concatenate((u,np.zeros((len(J),1))),axis=0)
-#    )
-#    tilde_Omega = lambda u : DI(u) - PhiS(Phi(A_fun(DI(u))))
-#    Omega = lambda v : lsqr(DJ, tilde_Omega(v))
-#
-#    ds = np.sign(DIS(x))
-#    Omega_x0 = Omega(ds)
-#
-#    proj = lambda w: DJS(lsqr(
-#        lambda u : DJ(DJS(u)), DJ(w)
-#    ))
-#    prox_indic = lambda w, la: w - proj(w)
-#
-#    proxinf = dual_prox(l1ball_projection)
-#    prox_obj = lambda x, la: -proxinf(Omega_x0 - x, la) + Omega_x0
-#
-#    w = douglas_rachford(prox_indic, prox_obj, np.zeros((len(J),1)))
-#    return np.max(np.abs(Omega_x0 - w))
-#
-#
-#def fast_ic(D, DS, Phi, PhiS, x):
-#    I = (np.abs(DS(x)) > 1e-5).flatten()
-#    J = ~I
-#    return _fast_ic(J, D, DS, D, DS, Phi, PhiS, x)
-#
-
